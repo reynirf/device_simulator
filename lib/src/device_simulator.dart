@@ -77,6 +77,9 @@ class DeviceSimulator extends StatefulWidget {
   /// Explicitly set to `null` to use the [defaultTargetPlatform].
   final TargetPlatform initialPlatform;
 
+  /// A List of [DeviceSpecification]s of the devices to show
+  final List<DeviceSpecification> specs;
+
   /// Creates a new [DeviceSimulator].
   DeviceSimulator({
     @required this.child,
@@ -89,6 +92,7 @@ class DeviceSimulator extends StatefulWidget {
     double smallDeviceWidth,
     double smallDeviceHeight,
     this.initialPlatform = TargetPlatform.iOS,
+    this.specs,
   })  : assert(smallDeviceWidth == null || smallDeviceWidth >= 0),
         assert(smallDeviceHeight == null || smallDeviceHeight >= 0),
         assert(
@@ -96,6 +100,7 @@ class DeviceSimulator extends StatefulWidget {
                 initialPlatform == TargetPlatform.iOS ||
                 initialPlatform == TargetPlatform.android,
             'only iOS and android platforms are supported: $initialPlatform'),
+        assert(specs == null || specs.isNotEmpty),
         smallDeviceWidth = smallDeviceWidth ?? smallDeviceHeight ?? 768.0,
         smallDeviceHeight = smallDeviceHeight ?? smallDeviceWidth ?? 768.0;
 
@@ -105,6 +110,9 @@ class DeviceSimulator extends StatefulWidget {
 class _DeviceSimulatorState extends State<DeviceSimulator> {
   Key _contentKey = UniqueKey();
   Key _navigatorKey = GlobalKey<NavigatorState>();
+  List<DeviceSpecification> _specs = [];
+  bool _hasIosSpecs = false;
+  bool _hasAndroidSpecs = false;
 
   @override
   void initState() {
@@ -118,6 +126,25 @@ class _DeviceSimulatorState extends State<DeviceSimulator> {
         break;
       default:
     }
+    _processSpecs();
+  }
+
+  @override
+  void didUpdateWidget(DeviceSimulator oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.specs != widget.specs) {
+      _processSpecs();
+    }
+  }
+
+  void _processSpecs() {
+    _specs = widget.specs ??
+        DeviceSpecification.specs
+            .where((device) => device.platform == _platform)
+            .toList();
+    _hasIosSpecs = _specs.any((dev) => dev.platform == TargetPlatform.iOS);
+    _hasAndroidSpecs =
+        _specs.any((dev) => dev.platform == TargetPlatform.android);
   }
 
   @override
@@ -138,10 +165,7 @@ class _DeviceSimulatorState extends State<DeviceSimulator> {
       );
     }
 
-    var specs = DeviceSpecification.specs
-        .where((device) => device.platform == _platform)
-        .toList();
-    var spec = specs[_currentDevice];
+    var spec = _specs[_currentDevice];
 
     Size simulatedSize = spec.size;
     if (mq.orientation == Orientation.landscape)
@@ -389,7 +413,7 @@ class _DeviceSimulatorState extends State<DeviceSimulator> {
                         Padding(
                           padding: EdgeInsets.only(top: 4.0),
                           child: Text(
-                            specs[_currentDevice].name,
+                            _specs[_currentDevice].name,
                             style: _kTextStyle.copyWith(
                                 color: Colors.white54, fontSize: 10.0),
                             maxLines: 1,
@@ -400,20 +424,21 @@ class _DeviceSimulatorState extends State<DeviceSimulator> {
                       ],
                     ),
                   ),
-                  Expanded(
-                    child: Slider(
-                      divisions: specs.length - 1,
-                      min: 0.0,
-                      max: (specs.length - 1).toDouble(),
-                      value: _currentDevice.toDouble(),
-                      label: specs[_currentDevice].name,
-                      onChanged: (double device) {
-                        setState(() {
-                          _currentDevice = device.round();
-                        });
-                      },
+                  if (_specs.length > 1)
+                    Expanded(
+                      child: Slider(
+                        divisions: _specs.length - 1,
+                        min: 0.0,
+                        max: (_specs.length - 1).toDouble(),
+                        value: _currentDevice.toDouble(),
+                        label: _specs[_currentDevice].name,
+                        onChanged: (double device) {
+                          setState(() {
+                            _currentDevice = device.round();
+                          });
+                        },
+                      ),
                     ),
-                  ),
                 ],
               ),
             ),
