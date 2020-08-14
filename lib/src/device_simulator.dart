@@ -366,8 +366,7 @@ class _DeviceSimulatorState extends State<DeviceSimulator> {
         children: <Widget>[
           Expanded(
             child: Align(
-              alignment:
-                  _screenshotMode ? Alignment(-1.0, -1.0) : Alignment(0.0, 0.0),
+              alignment: _screenshotMode ? Alignment.topLeft : Alignment.center,
               child: Container(
                 width: simulatedSize.width,
                 height: simulatedSize.height,
