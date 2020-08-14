@@ -16,7 +16,7 @@ class DeviceSpecification {
       this.padding = EdgeInsets.zero,
       this.paddingLandscape = EdgeInsets.zero,
       this.cornerRadius = 0.0,
-      this.notchSize,
+      this.notchSize = Size.zero,
       this.tablet = false,
       this.navBarHeight = 48.0})
       : assert(name != null),
@@ -24,6 +24,7 @@ class DeviceSpecification {
         assert(padding != null),
         assert(paddingLandscape != null),
         assert(cornerRadius != null && cornerRadius >= 0),
+        assert(notchSize != null),
         assert(tablet != null),
         assert(navBarHeight != null && navBarHeight >= 0);
 
