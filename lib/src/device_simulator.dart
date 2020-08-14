@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 
@@ -68,6 +69,14 @@ class DeviceSimulator extends StatefulWidget {
   /// Defaults to [smallDeviceWidth] or `768.0`
   final double smallDeviceHeight;
 
+  /// Set the initial [TargetPlatform]
+  ///
+  /// Only [TargetPlatform.iOS] and [TargetPlatfrom.android] are currently
+  /// supported.
+  ///
+  /// Explicitly set to `null` to use the [defaultTargetPlatform].
+  final TargetPlatform initialPlatform;
+
   /// Creates a new [DeviceSimulator].
   DeviceSimulator({
     @required this.child,
@@ -79,8 +88,14 @@ class DeviceSimulator extends StatefulWidget {
     this.silentlyDisableOnSmallDevices = false,
     double smallDeviceWidth,
     double smallDeviceHeight,
+    this.initialPlatform = TargetPlatform.iOS,
   })  : assert(smallDeviceWidth == null || smallDeviceWidth >= 0),
         assert(smallDeviceHeight == null || smallDeviceHeight >= 0),
+        assert(
+            initialPlatform == null ||
+                initialPlatform == TargetPlatform.iOS ||
+                initialPlatform == TargetPlatform.android,
+            'only iOS and android platforms are supported: $initialPlatform'),
         smallDeviceWidth = smallDeviceWidth ?? smallDeviceHeight ?? 768.0,
         smallDeviceHeight = smallDeviceHeight ?? smallDeviceWidth ?? 768.0;
 
@@ -95,6 +110,14 @@ class _DeviceSimulatorState extends State<DeviceSimulator> {
   void initState() {
     super.initState();
     if (widget.enable) SystemChrome.setEnabledSystemUIOverlays([]);
+    final initialPlatform = widget.initialPlatform ?? defaultTargetPlatform;
+    switch (initialPlatform) {
+      case TargetPlatform.android:
+      case TargetPlatform.iOS:
+        _platform = initialPlatform;
+        break;
+      default:
+    }
   }
 
   @override
