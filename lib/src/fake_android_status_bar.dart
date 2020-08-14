@@ -21,7 +21,7 @@ class FakeAndroidStatusBar extends StatelessWidget {
 
     double iconSize = min(height - padding * 2, 22.0);
 
-    return Container(
+    final child = Container(
       padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
       height: height,
       color: backgroundColor,
@@ -53,6 +53,7 @@ class FakeAndroidStatusBar extends StatelessWidget {
         ],
       ),
     );
+    return AbsorbPointer(child: child);
   }
 }
 
@@ -64,7 +65,7 @@ class FakeAndroidNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    final child = Container(
       height: height,
       decoration: BoxDecoration(
         color: Colors.blueGrey[800],
@@ -128,5 +129,6 @@ class FakeAndroidNavBar extends StatelessWidget {
         ),
       ),
     );
+    return AbsorbPointer(child: child);
   }
 }

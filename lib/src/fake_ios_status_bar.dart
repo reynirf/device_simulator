@@ -45,7 +45,7 @@ class FakeIOSStatusBar extends StatelessWidget {
       rightPadding = 8.0;
     }
 
-    return Container(
+    final child = Container(
       height: height,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -75,6 +75,7 @@ class FakeIOSStatusBar extends StatelessWidget {
         ],
       ),
     );
+    return AbsorbPointer(child: child);
   }
 }
 
@@ -87,7 +88,7 @@ class FakeIOSMultitaskBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    final child = Container(
       height: 20.0,
       child: Center(
         child: Container(
@@ -100,5 +101,6 @@ class FakeIOSMultitaskBar extends StatelessWidget {
         ),
       ),
     );
+    return AbsorbPointer(child: child);
   }
 }
