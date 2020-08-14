@@ -22,6 +22,15 @@ final _kTextStyle = TextStyle(
   decoration: TextDecoration.none,
 );
 
+/// A constant that is true if the application was compiled to run on the web.
+///
+/// This implementation takes advantage of the fact that JavaScript does not
+/// support integers. In this environment, Dart's doubles and ints are
+/// backed by the same kind of object. Thus a double `0.0` is identical
+/// to an integer `0`. This is not true for Dart code running in AOT or on the
+/// VM.
+const bool _kIsWeb = identical(0, 0.0);
+
 int _currentDevice = 0;
 bool _screenshotMode = false;
 TargetPlatform _platform = TargetPlatform.iOS;
@@ -234,7 +243,7 @@ class _DeviceSimulatorState extends State<DeviceSimulator> {
     );
 
     Widget clippedContent = ClipRRect(
-      // borderRadius: BorderRadius.circular(cornerRadius),
+      borderRadius: _kIsWeb ? null : BorderRadius.circular(cornerRadius),
       child: Padding(
         padding: EdgeInsets.only(bottom: navBarHeight),
         child: content,
@@ -242,7 +251,7 @@ class _DeviceSimulatorState extends State<DeviceSimulator> {
     );
 
     var corners = <Widget>[];
-    if (cornerRadius > 0) {
+    if (_kIsWeb && cornerRadius > 0) {
       corners = [
         Alignment.topLeft,
         Alignment.topRight,
