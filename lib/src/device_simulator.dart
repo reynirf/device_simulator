@@ -80,6 +80,9 @@ class DeviceSimulator extends StatefulWidget {
   /// A List of [DeviceSpecification]s of the devices to show
   final List<DeviceSpecification> specs;
 
+  /// A flag to enable/disable screenshots button
+  final bool enableScreenshots;
+
   /// Creates a new [DeviceSimulator].
   DeviceSimulator({
     @required this.child,
@@ -93,6 +96,7 @@ class DeviceSimulator extends StatefulWidget {
     double smallDeviceHeight,
     this.initialPlatform = TargetPlatform.iOS,
     this.specs,
+    this.enableScreenshots = true,
   })  : assert(smallDeviceWidth == null || smallDeviceWidth >= 0),
         assert(smallDeviceHeight == null || smallDeviceHeight >= 0),
         assert(
@@ -101,6 +105,7 @@ class DeviceSimulator extends StatefulWidget {
                 initialPlatform == TargetPlatform.android,
             'only iOS and android platforms are supported: $initialPlatform'),
         assert(specs == null || specs.isNotEmpty),
+        assert(enableScreenshots != null),
         smallDeviceWidth = smallDeviceWidth ?? smallDeviceHeight ?? 768.0,
         smallDeviceHeight = smallDeviceHeight ?? smallDeviceWidth ?? 768.0;
 
@@ -363,19 +368,21 @@ class _DeviceSimulatorState extends State<DeviceSimulator> {
                         });
                       },
                     ),
-                  VerticalDivider(
-                    color: _kDividerColor,
-                    indent: 4.0,
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.camera_alt),
-                    color: Colors.white,
-                    onPressed: () {
-                      setState(() {
-                        _screenshotMode = true;
-                      });
-                    },
-                  ),
+                  if (widget.enableScreenshots)
+                    VerticalDivider(
+                      color: _kDividerColor,
+                      indent: 4.0,
+                    ),
+                  if (widget.enableScreenshots)
+                    IconButton(
+                      icon: Icon(Icons.camera_alt),
+                      color: Colors.white,
+                      onPressed: () {
+                        setState(() {
+                          _screenshotMode = true;
+                        });
+                      },
+                    ),
                   VerticalDivider(
                     color: _kDividerColor,
                     indent: 4.0,
