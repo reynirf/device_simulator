@@ -10,7 +10,7 @@ class DeviceSpecification {
   final bool tablet;
   final double navBarHeight;
 
-  DeviceSpecification(
+  const DeviceSpecification(
       {this.name,
       this.size,
       this.padding,
