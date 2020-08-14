@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
@@ -232,12 +234,34 @@ class _DeviceSimulatorState extends State<DeviceSimulator> {
     );
 
     Widget clippedContent = ClipRRect(
-      borderRadius: BorderRadius.all(Radius.circular(cornerRadius)),
+      // borderRadius: BorderRadius.circular(cornerRadius),
       child: Padding(
         padding: EdgeInsets.only(bottom: navBarHeight),
         child: content,
       ),
     );
+
+    var corners = <Widget>[];
+    if (cornerRadius > 0) {
+      corners = [
+        Alignment.topLeft,
+        Alignment.topRight,
+        Alignment.bottomLeft,
+        Alignment.bottomRight
+      ].map<Widget>((alignment) {
+        return Positioned(
+          top: alignment.y == -1 ? 0 : null,
+          left: alignment.x == -1 ? 0 : null,
+          right: alignment.x == 1 ? 0 : null,
+          bottom: alignment.y == 1 ? 0 : null,
+          child: _CornerOverlay(
+            color: _kBackgroundColor,
+            radius: cornerRadius,
+            alignment: alignment,
+          ),
+        );
+      }).toList();
+    }
 
     Size notchSize = _screenshotMode ? Size.zero : spec.notchSize ?? Size.zero;
     Widget notch;
@@ -323,6 +347,7 @@ class _DeviceSimulatorState extends State<DeviceSimulator> {
               cornerRadius: cornerRadius,
             ),
           ),
+        ...corners,
       ],
     );
 
@@ -567,5 +592,70 @@ class _MediaQueryFromWindowsState extends State<_MediaQueryFromWindow>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+}
+
+/// Creates a rounded corner to be used as an overlay, not as a clipper
+class _CornerOverlay extends StatelessWidget {
+  _CornerOverlay({
+    this.color,
+    this.radius,
+    this.alignment,
+  });
+
+  final Color color;
+  final double radius;
+  final Alignment alignment;
+
+  Widget build(BuildContext context) {
+    return CustomPaint(
+      painter: _CornerOverlayPainter(
+        color: color,
+        radius: radius,
+        alignment: alignment,
+      ),
+      size: Size.square(radius),
+    );
+  }
+}
+
+class _CornerOverlayPainter extends CustomPainter {
+  _CornerOverlayPainter({
+    this.color,
+    this.radius,
+    this.alignment,
+  });
+
+  final Color color;
+  final double radius;
+  final Alignment alignment;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    var path = Path()
+      ..lineTo(size.width, 0.0)
+      ..arcToPoint(
+        Offset(0.0, size.height),
+        radius: Radius.circular(radius),
+        clockwise: false,
+      )
+      ..close();
+    if (alignment == Alignment.topRight) {
+      canvas.rotate(math.pi / 2);
+      canvas.translate(0, -radius);
+    } else if (alignment == Alignment.bottomRight) {
+      canvas.rotate(math.pi);
+      canvas.translate(-radius, -radius);
+    } else if (alignment == Alignment.bottomLeft) {
+      canvas.rotate(-math.pi / 2);
+      canvas.translate(-radius, 0);
+    }
+    canvas.drawPath(path, Paint()..color = color);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    return oldDelegate is _CornerOverlayPainter &&
+        (oldDelegate.color != color || oldDelegate.radius != radius);
   }
 }
