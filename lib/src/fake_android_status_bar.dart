@@ -13,7 +13,7 @@ class FakeAndroidStatusBar extends StatelessWidget {
   Widget build(BuildContext context) {
     double padding = 2.0;
     TextStyle style = TextStyle(
-      fontFamily: 'Roboto',
+      fontFamilyFallback: ['Roboto'],
       fontWeight: FontWeight.w500,
       fontSize: 15.0,
       color: Colors.white,

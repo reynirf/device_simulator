@@ -8,13 +8,13 @@ class FakeIOSStatusBar extends StatelessWidget {
   final bool notch;
 
   final _uiStyle = TextStyle(
-    fontFamily: '.SF UI',
+    fontFamilyFallback: ['.SF UI Display'],
     fontSize: 12.0,
     fontWeight: FontWeight.w600,
   );
 
   final _uiStyleNotch = TextStyle(
-    fontFamily: '.SF UI',
+    fontFamilyFallback: ['.SF UI Display'],
     fontSize: 15.0,
     fontWeight: FontWeight.w600,
   );

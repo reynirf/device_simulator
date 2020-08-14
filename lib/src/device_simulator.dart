@@ -17,7 +17,7 @@ final Color _kBackgroundColor = Colors.grey[900];
 final Color _kDividerColor = Colors.grey[700];
 final _kTextStyle = TextStyle(
   color: Colors.white,
-  fontFamily: '.SF UI Text',
+  fontFamilyFallback: ['.SF UI Text', 'Roboto'],
   fontSize: 12.0,
   decoration: TextDecoration.none,
 );
