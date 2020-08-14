@@ -376,7 +376,7 @@ class _DeviceSimulatorState extends State<DeviceSimulator> {
           ),
           if (!_screenshotMode)
             Container(
-              height: 72.0,
+              height: _kSettingsHeight,
               color: Colors.black,
               padding: EdgeInsets.only(
                   left: 16.0 + mq.padding.left,
