@@ -346,6 +346,9 @@ class _DeviceSimulatorState extends State<DeviceSimulator> {
                         size: 22.0,
                       ),
                       onPressed: () {
+                        if (_platform == TargetPlatform.android) {
+                          return;
+                        }
                         setState(() {
                           _platform = TargetPlatform.android;
                           _currentDevice = 0;
@@ -362,6 +365,9 @@ class _DeviceSimulatorState extends State<DeviceSimulator> {
                         size: 20.0,
                       ),
                       onPressed: () {
+                        if (_platform == TargetPlatform.iOS) {
+                          return;
+                        }
                         setState(() {
                           _platform = TargetPlatform.iOS;
                           _currentDevice = 0;
