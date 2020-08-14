@@ -51,6 +51,9 @@ class DeviceSimulator extends StatefulWidget {
   /// The color of the top Android status bar (default is transparent black).
   final Color androidStatusBarBackgroundColor;
 
+  /// Do not show the note that the screen size is too small.
+  final bool silentlyDisableOnSmallDevices;
+
   /// Creates a new [DeviceSimulator].
   DeviceSimulator(
       {@required this.child,
@@ -58,7 +61,8 @@ class DeviceSimulator extends StatefulWidget {
       this.brightness = Brightness.light,
       this.iOSMultitaskBarColor = Colors.grey,
       this.androidShowNavigationBar = true,
-      this.androidStatusBarBackgroundColor = Colors.black26});
+      this.androidStatusBarBackgroundColor = Colors.black26,
+      this.silentlyDisableOnSmallDevices = false})
 
   _DeviceSimulatorState createState() => _DeviceSimulatorState();
 }
@@ -81,6 +85,9 @@ class _DeviceSimulatorState extends State<DeviceSimulator> {
     var theme = Theme.of(context);
 
     if (mq.size.width < 768.0 || mq.size.height < 768.0) {
+      if (widget.silentlyDisableOnSmallDevices) {
+        return widget.child;
+      }
       return DisabledDeviceSimulator(
         child: widget.child,
         style: _kTextStyle,
