@@ -14,15 +14,20 @@ class DeviceSpecification {
   const DeviceSpecification({
     @required this.name,
     @required this.size,
+    @required this.platform,
     this.padding = EdgeInsets.zero,
     this.paddingLandscape = EdgeInsets.zero,
     this.cornerRadius = 0.0,
     this.notchSize = Size.zero,
     this.tablet = false,
     this.navBarHeight = 48.0,
-    this.platform,
   })  : assert(name != null),
         assert(size != null),
+        assert(platform != null),
+        assert(
+            platform == TargetPlatform.iOS ||
+                platform == TargetPlatform.android,
+            'only iOS and android platforms are supported: $platform'),
         assert(padding != null),
         assert(paddingLandscape != null),
         assert(cornerRadius != null && cornerRadius >= 0),
