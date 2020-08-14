@@ -138,10 +138,7 @@ class _DeviceSimulatorState extends State<DeviceSimulator> {
   }
 
   void _processSpecs() {
-    _specs = widget.specs ??
-        DeviceSpecification.specs
-            .where((device) => device.platform == _platform)
-            .toList();
+    _specs = (widget.specs ?? DeviceSpecification.specs);
     _hasIosSpecs = _specs.any((dev) => dev.platform == TargetPlatform.iOS);
     _hasAndroidSpecs =
         _specs.any((dev) => dev.platform == TargetPlatform.android);
@@ -165,7 +162,8 @@ class _DeviceSimulatorState extends State<DeviceSimulator> {
       );
     }
 
-    var spec = _specs[_currentDevice];
+    var specs = _specs.where((device) => device.platform == _platform).toList();
+    var spec = specs[_currentDevice];
 
     Size simulatedSize = spec.size;
     if (mq.orientation == Orientation.landscape)
@@ -337,36 +335,38 @@ class _DeviceSimulatorState extends State<DeviceSimulator> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  IconButton(
-                    icon: Icon(
-                      Icons.android,
-                      color: _platform == TargetPlatform.android
-                          ? Colors.white
-                          : Colors.white24,
-                      size: 22.0,
+                  if (_hasAndroidSpecs)
+                    IconButton(
+                      icon: Icon(
+                        Icons.android,
+                        color: _platform == TargetPlatform.android
+                            ? Colors.white
+                            : Colors.white24,
+                        size: 22.0,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _platform = TargetPlatform.android;
+                          _currentDevice = 0;
+                        });
+                      },
                     ),
-                    onPressed: () {
-                      setState(() {
-                        _platform = TargetPlatform.android;
-                        _currentDevice = 0;
-                      });
-                    },
-                  ),
-                  IconButton(
-                    icon: Icon(
-                      IconApple.apple, // TODO: better image
-                      color: _platform == TargetPlatform.iOS
-                          ? Colors.white
-                          : Colors.white24,
-                      size: 20.0,
+                  if (_hasIosSpecs)
+                    IconButton(
+                      icon: Icon(
+                        IconApple.apple, // TODO: better image
+                        color: _platform == TargetPlatform.iOS
+                            ? Colors.white
+                            : Colors.white24,
+                        size: 20.0,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _platform = TargetPlatform.iOS;
+                          _currentDevice = 0;
+                        });
+                      },
                     ),
-                    onPressed: () {
-                      setState(() {
-                        _platform = TargetPlatform.iOS;
-                        _currentDevice = 0;
-                      });
-                    },
-                  ),
                   VerticalDivider(
                     color: _kDividerColor,
                     indent: 4.0,
@@ -413,7 +413,7 @@ class _DeviceSimulatorState extends State<DeviceSimulator> {
                         Padding(
                           padding: EdgeInsets.only(top: 4.0),
                           child: Text(
-                            _specs[_currentDevice].name,
+                            specs[_currentDevice].name,
                             style: _kTextStyle.copyWith(
                                 color: Colors.white54, fontSize: 10.0),
                             maxLines: 1,
@@ -424,14 +424,14 @@ class _DeviceSimulatorState extends State<DeviceSimulator> {
                       ],
                     ),
                   ),
-                  if (_specs.length > 1)
+                  if (specs.length > 1)
                     Expanded(
                       child: Slider(
-                        divisions: _specs.length - 1,
+                        divisions: specs.length - 1,
                         min: 0.0,
-                        max: (_specs.length - 1).toDouble(),
+                        max: (specs.length - 1).toDouble(),
                         value: _currentDevice.toDouble(),
-                        label: _specs[_currentDevice].name,
+                        label: specs[_currentDevice].name,
                         onChanged: (double device) {
                           setState(() {
                             _currentDevice = device.round();
