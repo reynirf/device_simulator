@@ -10,16 +10,16 @@ class DeviceSpecification {
   final bool tablet;
   final double navBarHeight;
 
-  const DeviceSpecification(
-      {this.name,
-      this.size,
-      this.padding = EdgeInsets.zero,
-      this.paddingLandscape = EdgeInsets.zero,
-      this.cornerRadius = 0.0,
-      this.notchSize = Size.zero,
-      this.tablet = false,
-      this.navBarHeight = 48.0})
-      : assert(name != null),
+  const DeviceSpecification({
+    @required this.name,
+    @required this.size,
+    this.padding = EdgeInsets.zero,
+    this.paddingLandscape = EdgeInsets.zero,
+    this.cornerRadius = 0.0,
+    this.notchSize = Size.zero,
+    this.tablet = false,
+    this.navBarHeight = 48.0,
+  })  : assert(name != null),
         assert(size != null),
         assert(padding != null),
         assert(paddingLandscape != null),
