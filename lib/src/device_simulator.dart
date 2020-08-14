@@ -271,29 +271,6 @@ class _DeviceSimulatorState extends State<DeviceSimulator> {
             ),
     );
 
-    Widget fakeMultitaskBar = Positioned(
-      left: 0.0,
-      right: 0.0,
-      bottom: 0.0,
-      height: spec.padding.bottom,
-      child: FakeIOSMultitaskBar(
-        width: simulatedSize.width / 3.0,
-        color: widget.iOSMultitaskBarColor,
-        tablet: spec.tablet,
-      ),
-    );
-
-    Widget fakeNavigationBar = Positioned(
-      left: 0.0,
-      right: 0.0,
-      bottom: 0.0,
-      height: spec.navBarHeight,
-      child: FakeAndroidNavBar(
-        height: spec.navBarHeight,
-        cornerRadius: cornerRadius,
-      ),
-    );
-
     clippedContent = Stack(
       children: <Widget>[
         clippedContent,
@@ -302,10 +279,29 @@ class _DeviceSimulatorState extends State<DeviceSimulator> {
         if (_platform == TargetPlatform.iOS &&
             spec.cornerRadius > 0.0 &&
             mq.size != simulatedSize)
-          fakeMultitaskBar,
+          Positioned(
+            left: 0.0,
+            right: 0.0,
+            bottom: 0.0,
+            height: spec.padding.bottom,
+            child: FakeIOSMultitaskBar(
+              width: simulatedSize.width / 3.0,
+              color: widget.iOSMultitaskBarColor,
+              tablet: spec.tablet,
+            ),
+          ),
         if (widget.androidShowNavigationBar &&
             _platform == TargetPlatform.android)
-          fakeNavigationBar,
+          Positioned(
+            left: 0.0,
+            right: 0.0,
+            bottom: 0.0,
+            height: spec.navBarHeight,
+            child: FakeAndroidNavBar(
+              height: spec.navBarHeight,
+              cornerRadius: cornerRadius,
+            ),
+          ),
       ],
     );
 
