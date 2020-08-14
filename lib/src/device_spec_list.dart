@@ -81,7 +81,6 @@ final androidSpecs = <DeviceSpecification>[
     name: 'Android One',
     size: Size(320.0, 569.0),
     padding: EdgeInsets.only(top: 24.0),
-    navBarHeight: 48.0,
   ),
   DeviceSpecification(
     name: 'Nexus 5',
