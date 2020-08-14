@@ -54,15 +54,35 @@ class DeviceSimulator extends StatefulWidget {
   /// Do not show the note that the screen size is too small.
   final bool silentlyDisableOnSmallDevices;
 
+  /// Width threshold of what is considered a small device width
+  ///
+  /// screenWidth < [smallDeviceWidth]
+  ///
+  /// Defaults to [smallDeviceHeight] or `768.0`
+  final double smallDeviceWidth;
+
+  /// Height threshold of what is considered a small device height
+  ///
+  /// screenHeight < [smallDeviceHeight]
+  ///
+  /// Defaults to [smallDeviceWidth] or `768.0`
+  final double smallDeviceHeight;
+
   /// Creates a new [DeviceSimulator].
-  DeviceSimulator(
-      {@required this.child,
-      this.enable = true,
-      this.brightness = Brightness.light,
-      this.iOSMultitaskBarColor = Colors.grey,
-      this.androidShowNavigationBar = true,
-      this.androidStatusBarBackgroundColor = Colors.black26,
-      this.silentlyDisableOnSmallDevices = false})
+  DeviceSimulator({
+    @required this.child,
+    this.enable = true,
+    this.brightness = Brightness.light,
+    this.iOSMultitaskBarColor = Colors.grey,
+    this.androidShowNavigationBar = true,
+    this.androidStatusBarBackgroundColor = Colors.black26,
+    this.silentlyDisableOnSmallDevices = false,
+    double smallDeviceWidth,
+    double smallDeviceHeight,
+  })  : assert(smallDeviceWidth == null || smallDeviceWidth >= 0),
+        assert(smallDeviceHeight == null || smallDeviceHeight >= 0),
+        smallDeviceWidth = smallDeviceWidth ?? smallDeviceHeight ?? 768.0,
+        smallDeviceHeight = smallDeviceHeight ?? smallDeviceWidth ?? 768.0;
 
   _DeviceSimulatorState createState() => _DeviceSimulatorState();
 }
@@ -84,7 +104,8 @@ class _DeviceSimulatorState extends State<DeviceSimulator> {
     var mq = MediaQuery.of(context);
     var theme = Theme.of(context);
 
-    if (mq.size.width < 768.0 || mq.size.height < 768.0) {
+    if (mq.size.width < widget.smallDeviceWidth ||
+        mq.size.height < widget.smallDeviceHeight) {
       if (widget.silentlyDisableOnSmallDevices) {
         return widget.child;
       }
