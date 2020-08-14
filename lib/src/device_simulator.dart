@@ -422,7 +422,7 @@ class _DeviceSimulatorState extends State<DeviceSimulator> {
                         Padding(
                           padding: EdgeInsets.only(top: 4.0),
                           child: Text(
-                            specs[_currentDevice].name,
+                            spec.name,
                             style: _kTextStyle.copyWith(
                                 color: Colors.white54, fontSize: 10.0),
                             maxLines: 1,
@@ -440,7 +440,7 @@ class _DeviceSimulatorState extends State<DeviceSimulator> {
                         min: 0.0,
                         max: (specs.length - 1).toDouble(),
                         value: _currentDevice.toDouble(),
-                        label: specs[_currentDevice].name,
+                        label: spec.name,
                         onChanged: (double device) {
                           setState(() {
                             _currentDevice = device.round();
