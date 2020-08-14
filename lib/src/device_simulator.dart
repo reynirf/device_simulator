@@ -153,6 +153,22 @@ class _DeviceSimulatorState extends State<DeviceSimulator> {
   Widget build(BuildContext context) {
     if (!widget.enable) return widget.child;
 
+    final noApp = MediaQuery.of(context, nullOk: true) == null;
+    if (noApp) {
+      return Material(
+        child: Directionality(
+          textDirection: TextDirection.ltr,
+          child: _MediaQueryFromWindow(
+            child: Builder(builder: _build),
+          ),
+        ),
+      );
+    }
+
+    return _build(context);
+  }
+
+  Widget _build(BuildContext context) {
     var mq = MediaQuery.of(context);
     var theme = Theme.of(context);
 
