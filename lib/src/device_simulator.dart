@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'package:custom_navigator/custom_navigator.dart';
 
-import 'device_spec_list.dart';
+import 'device_specification.dart';
 import 'disabled.dart';
 import 'fake_android_status_bar.dart';
 import 'fake_ios_status_bar.dart';
@@ -138,7 +138,9 @@ class _DeviceSimulatorState extends State<DeviceSimulator> {
       );
     }
 
-    var specs = _platform == TargetPlatform.iOS ? iosSpecs : androidSpecs;
+    var specs = DeviceSpecification.specs
+        .where((device) => device.platform == _platform)
+        .toList();
     var spec = specs[_currentDevice];
 
     Size simulatedSize = spec.size;
