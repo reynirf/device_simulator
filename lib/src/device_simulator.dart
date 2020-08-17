@@ -226,28 +226,18 @@ class _DeviceSimulatorState extends State<DeviceSimulator> {
     if (mq.orientation == Orientation.landscape &&
         spec.paddingLandscape != null) padding = spec.paddingLandscape;
 
-    var content = MediaQuery(
+    final device = SimulatedDevice(
       key: _contentKey,
-      data: mq.copyWith(
-        size: Size(simulatedSize.width, simulatedSize.height - navBarHeight),
-        padding: padding,
-      ),
-      child: Theme(
-        data: theme.copyWith(platform: _platform),
-        child: CustomNavigator(
-          navigatorKey: _navigatorKey,
-          home: widget.child,
-          pageRoute: PageRoutes.materialPageRoute,
-        ),
-      ),
+      size: simulatedSize,
+      padding: padding,
+      navBarHeight: navBarHeight,
+      child: widget.child,
+      navigatorKey: _navigatorKey,
     );
 
     Widget clippedContent = ClipRRect(
       borderRadius: _kIsWeb ? null : BorderRadius.circular(cornerRadius),
-      child: Padding(
-        padding: EdgeInsets.only(bottom: navBarHeight),
-        child: content,
-      ),
+      child: device,
     );
 
     var corners = <Widget>[];
@@ -665,5 +655,88 @@ class _CornerOverlayPainter extends CustomPainter {
   bool shouldRepaint(CustomPainter oldDelegate) {
     return oldDelegate is _CornerOverlayPainter &&
         (oldDelegate.color != color || oldDelegate.radius != radius);
+  }
+}
+
+class SimulatedDevice extends StatelessWidget {
+  SimulatedDevice({
+    Key key,
+    @required this.size,
+    this.padding = EdgeInsets.zero,
+    this.navBarHeight = 0.0,
+    @required this.child,
+    this.navigatorKey,
+  })  : assert(size != null),
+        assert(padding != null),
+        assert(navBarHeight != null),
+        assert(child != null),
+        super(key: key);
+
+  factory SimulatedDevice.fromSpec({
+    Key key,
+    @required DeviceSpecification spec,
+    Orientation orientation = Orientation.portrait,
+    @required Widget child,
+    GlobalKey<NavigatorState> navigatorKey,
+    bool androidShowNavigationBar = true,
+  }) {
+    assert(spec != null);
+    assert(orientation != null);
+    assert(androidShowNavigationBar != null);
+    Size size = spec.size;
+    EdgeInsets padding = spec.padding;
+    if (orientation == Orientation.landscape) {
+      size = size.flipped;
+      padding = spec.paddingLandscape ?? padding;
+    }
+    double navBarHeight = 0.0;
+    if (spec.platform == TargetPlatform.android && androidShowNavigationBar) {
+      navBarHeight = spec.navBarHeight;
+    }
+    return SimulatedDevice(
+      key: key,
+      size: size,
+      padding: padding,
+      navBarHeight: navBarHeight,
+      child: child,
+      navigatorKey: navigatorKey,
+    );
+  }
+
+  final Size size;
+  final EdgeInsets padding;
+  final double navBarHeight;
+  final Widget child;
+  final GlobalKey<NavigatorState> navigatorKey;
+
+  Widget build(BuildContext context) {
+    final mq = MediaQuery.of(context);
+    final theme = Theme.of(context);
+
+    final _size = Size(
+      math.min(size.width, mq.size.width),
+      math.min(size.height - navBarHeight, mq.size.height - navBarHeight),
+    );
+    var content = MediaQuery(
+      data: mq.copyWith(
+        size: _size, //Size(size.width, size.height - navBarHeight),
+        padding: padding,
+      ),
+      child: Theme(
+        data: theme.copyWith(platform: _platform),
+        child: navigatorKey == null
+            ? child
+            : CustomNavigator(
+                navigatorKey: navigatorKey,
+                home: child,
+                pageRoute: PageRoutes.materialPageRoute,
+              ),
+      ),
+    );
+
+    return Padding(
+      padding: EdgeInsets.only(bottom: navBarHeight),
+      child: content,
+    );
   }
 }
